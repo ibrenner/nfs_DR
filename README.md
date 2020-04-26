@@ -26,7 +26,8 @@ password value should be encrypted using base64.
 ```
 usage: nfs_exports_sync.py [-h] -s SOURCE -d DESTINATION -c CREDFILE
 
-usage: nfs_failover.py [-h] -o {disable,enable,failover} -i IBOX -c
-                       CREDFILE
+usage: nfs_failover.py [-h] -o {disable,enable,failover,reverse} -i IBOX -c CREDFILE
+
+usage: nfs_failback.py [-h] -o {failback,restore} -s SOURCE -d DESTINATION -c CREDFILE
 ```
 
