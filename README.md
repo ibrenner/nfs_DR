@@ -6,6 +6,10 @@ the following has 2 scripts:
       disable - will disable all NAS network spaces for a given InfiniBox. \
       enable - will enable all NAS network spaces for a given InfiniBox. \
       failover - will detach replication link and preform change role for all repliocated filesystems.
+      reverse - reverse operation of failover \
+3. nfs_failback - used for failback operation in real DR situation \
+      failback - change prod system to target replication \
+      restore - restores prod and DR systems to original replication states \
 
 ## Prerequisites
 The script uses python 3 \
