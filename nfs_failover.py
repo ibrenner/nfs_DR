@@ -70,10 +70,10 @@ if __name__ == '__main__':
         if args.option == 'failover':
             fs_replica = get_replicas(dstibox, 'TARGET')
             link_detach(fs_replica[0])
-            change_role(dstibox)
+            change_role(fs_replica)
         if args.option == 'reverse':
             fs_replica = get_replicas(dstibox, 'SOURCE')
             link_attach(dstibox, fs_replica[0])
-            change_role(dstibox)
+            change_role(fs_replica)
         print('{}: Completed Successfully'.format(datetime.now().strftime('%D %H:%M:%S')))
 
