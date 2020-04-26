@@ -10,7 +10,7 @@ urllib3.disable_warnings()
 
 
 def change_role(replicas):
-    for replica in fs_replica:
+    for replica in replicas:
         replica.change_role()
 
 # Link detach \ attach
@@ -32,20 +32,22 @@ def enable_ip(ibox):
     nas_nspaces=ibox.network_spaces.find(service='NAS_SERVICE')
     for ns in nas_nspaces:
         for ip in ns.get_ips():
-            ns.enable_ip_address(ip['ip_address'])
+            if not ip['enabled']:
+                ns.enable_ip_address(ip['ip_address'])
 
 def disable_ip(ibox):
     nas_nspaces=ibox.network_spaces.find(service='NAS_SERVICE')
     for ns in nas_nspaces:
         for ip in ns.get_ips():
-            ns.disable_ip_address(ip['ip_address'])
+                if ip['enabled']:
+                    ns.disable_ip_address(ip['ip_address'])
 
 def get_args():
     """
     Supports the command-line arguments listed below.
     """
     parser = argparse.ArgumentParser(description="Script for syncing exports.")
-    parser.add_argument('-o', '--option', choices=['disable', 'enable', 'failover', 'failback'], required=True, help='Choose the needed option')
+    parser.add_argument('-o', '--option', choices=['disable', 'enable', 'failover', 'reverse'], required=True, help='Choose the needed option')
     parser.add_argument('-i', '--ibox', nargs=1, required=True, help='FQDN or IP of Destination ibox')
     parser.add_argument('-c', '--credfile', nargs=1, required=True, help='Path to Credentials file ')
     args = parser.parse_args()
@@ -69,9 +71,9 @@ if __name__ == '__main__':
             fs_replica = get_replicas(dstibox, 'TARGET')
             link_detach(fs_replica[0])
             change_role(dstibox)
-        # if args.option == 'failback':
-        #     fs_replica = get_replicas(dstibox, 'SOURCE')
-        #     link_attach(dstibox, fs_replica[0])
-        #     change_role(dstibox)
+        if args.option == 'reverse':
+            fs_replica = get_replicas(dstibox, 'SOURCE')
+            link_attach(dstibox, fs_replica[0])
+            change_role(dstibox)
         print('{}: Completed Successfully'.format(datetime.now().strftime('%D %H:%M:%S')))
 
