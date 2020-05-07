@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from configparser import ConfigParser
-from nfs_exports_sync import iboxauth, get_replicas
+from nfs_exports_sync import iboxauth, get_replicas, iboxevent
 from nfs_failover import change_role, link_attach, link_detach, enable_ip, disable_ip
-import base64, argparse, os
+import base64, argparse, os, socket, time
 from datetime import datetime
 from infinisdk import InfiniBox
 import urllib3
@@ -57,6 +57,7 @@ if __name__ == '__main__':
                 change_role(rep)
                 for r in drep:
                     r.resume()
+            iboxevent(dstibox, "script {} run from {}".format(os.path.basename(__file__), socket.gethostname()))
         if args.option == 'restore':
             print("Disabling NAS Network spaces on {}".format(dstibox))
             print("Enabling NAS Network spaces on {}".format(srcibox))
@@ -67,10 +68,9 @@ if __name__ == '__main__':
             if user_input():
                 rep = get_replicas(srcibox, 'TARGET')
                 change_role(rep)
+                time.sleep(8)
                 drep = get_replicas(dstibox, 'SOURCE')
                 change_role(drep)
                 for r in rep:
                     r.resume()
-
-
-
+            iboxevent(dstibox, "script {} run from {}".format(os.path.basename(__file__), socket.gethostname()))

@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 from configparser import ConfigParser
-from nfs_exports_sync import iboxauth, get_replicas
-import base64, argparse, os
+from nfs_exports_sync import iboxauth, get_replicas, iboxevent
+import base64, argparse, os, socket
 from datetime import datetime
 from infinisdk import InfiniBox
 import urllib3
@@ -76,4 +76,6 @@ if __name__ == '__main__':
             link_attach(dstibox, fs_replica[0])
             change_role(fs_replica)
         print('{}: Completed Successfully'.format(datetime.now().strftime('%D %H:%M:%S')))
+        iboxevent(dstibox, "script {} run from {}".format(os.path.basename(__file__), socket.gethostname()))
+
 

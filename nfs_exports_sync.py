@@ -1,11 +1,16 @@
 #!/usr/bin/python3
 
 from configparser import ConfigParser
-import base64, argparse, os
+import base64, argparse, os, socket
 from datetime import datetime
 from infinisdk import InfiniBox
 import urllib3
 urllib3.disable_warnings()
+
+
+
+def iboxevent(ibox,desc):
+    ibox.events.create_custom_event(level='INFO', description='{}'.format(desc), visibility='CUSTOMER')
 
 
 def iboxauth(ibox,user,pw):
@@ -93,6 +98,7 @@ if __name__ == '__main__':
         exports_creation(fs_replica, srcibox, dstibox)
         exports_deletion(fs_replica, srcibox, dstibox)
         print('{}: Completed Successfully'.format(datetime.now().strftime('%D %H:%M:%S')))
+        iboxevent(dstibox, "script {} run from {}".format(os.path.basename(__file__), socket.gethostname()))
     else:
         print("ERROR: Credentials File Not Found")
         exit(1)
