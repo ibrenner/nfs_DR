@@ -67,9 +67,10 @@ if __name__ == '__main__':
             print("Changing Role on {} and {}".format(srcibox, dstibox))
             if user_input():
                 rep = get_replicas(srcibox, 'TARGET')
-                change_role(rep)
-                time.sleep(8)
                 drep = get_replicas(dstibox, 'SOURCE')
+                for r in drep:
+                    r.suspend()
+                change_role(rep)
                 change_role(drep)
                 for r in rep:
                     r.resume()
