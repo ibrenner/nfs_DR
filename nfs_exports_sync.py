@@ -86,20 +86,8 @@ def shares_creation(replica, srcibox, dstibox):
                     data=share_properties(src_sh,replica)
                     new_data = {k: v for k, v in data.items() if k != "permissions"}
                     resp=dstibox.api.post('shares?approved=true', data=new_data)
-                    #new_perm = [{k: v for k, v in item.items() if k not in ('id', 'share_id')} for item in data['permissions'] if item['sid'] != 'S-1-1-0']
-                    #for p in new_perm:
-                    #    dstibox.api.post('shares/{}/permissions'.format(resp.get_result()['id']), data=p)
 
 
-
-#def handle_perms(src, dst):
-#    src_shares = src.api.get('shares')
-#    dst_shares = dst.api.get('shares')
-#    for share in src_shares:
-#        for dst_shr in dst_sha:
-#
-
-    # range over src and dst permissions and create\modify\delete each permission according to source
 
 def get_permission_dict(permissions):
     """Create a dict: SID -> access."""
@@ -138,9 +126,6 @@ def build_share_dict(data):
     # Build a dict mapping share name to its permissions
     return {share['name']: share for share in data['result']}
 
-#def permissions_equal(perms1, perms2):
-    # Compare normalized permission lists
-#    return normalize_permissions(perms1) == normalize_permissions(perms2)
 
 def sync_permissions(source_data, dest_data, update_permissions_func,dst):
     source_shares = build_share_dict(source_data)
@@ -166,16 +151,10 @@ def sync_permissions(source_data, dest_data, update_permissions_func,dst):
             print(f"\nShare '{name}' not found in destination.")
 
 def update_permissions_func(share_id, to_add, to_modify,dst):
-    """
-    Implement your API call to update permissions for share_id.
-    For demonstration, this just prints the actions.
-    """
     for perm in to_add:
         print(f"Would add permission {perm} to share {share_id}")
         inc = {'sid','access'}
         p={k: perm[k] for k in inc}
-        # Example API call: requests.post(f"/shares/{share_id}/permissions", json=perm)
-        #new_perm = [{k: v for k, v in item.items() if k not in ('id', 'share_id')} for item in data['permissions'] if item['sid'] != 'S-1-1-0']
         dst.api.post('shares/{}/permissions'.format(share_id), data=p)
     for perm in to_modify:
         print(f"Would update SID {perm['sid']} on share {share_id} from {perm['dst_access']} to {perm['access']}")
@@ -225,7 +204,6 @@ def get_args():
     Supports the command-line arguments listed below.
     """
     parser = argparse.ArgumentParser(description="Script for syncing exports.")
-    # parser.add_argument('-o', '--option', choices=['create', 'query', 'delete', 'restore'], required=True, help='Choose the needed option')
     parser.add_argument('-s', '--source', nargs=1, required=True, help='FQDN or IP of source ibox')
     parser.add_argument('-d', '--destination', nargs=1, required=True, help='FQDN or IP of Destination ibox')
     parser.add_argument('-c', '--credfile', nargs=1, required=True, help='Path to Credentials file ')
